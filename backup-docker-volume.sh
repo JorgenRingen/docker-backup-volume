@@ -1,20 +1,35 @@
 #!/bin/sh
 
-# Work in progress....
+# STEPS:
+# 1. Validate that the docker-volume and backup dir exists
+# 2. Start a new container that mounts the docker-volume and the backup dir
+# 3. Create a "tar" of the content of the docker-volume and place it in the backup dir
 
-# todo: use named parameters, error handling, etc... (too lazy..)
-VOLUME_TO_BACKUP=$1
-LOCAL_BACKUP_DEST=$2 # must exist on host and have correct read/write
-NAME_OF_BACKUP_TAR=$VOLUME_TO_BACKUP-backup-$(date +%d-%m-%y-%H:%M:%S).tar
+DOCKER_VOLUME=$1
+BACKUP_DIR=$2
+BACKUP_FILE=${DOCKER_VOLUME}-backup-$(date +%d-%m-%y-%H.%M.%S).tar.gz
+DOCKER_IMAGE=ubuntu
 
-echo "Backing up the docker-data-volume '$VOLUME_TO_BACKUP' to directory '$LOCAL_BACKUP_DEST'"
+function validateInput() {
+    if [ ! -d "${BACKUP_DIR}" ] ; then
+        echo "> Error: backup directory doesn't exist at ${BACKUP_DIR}"
+        exit 1
+    fi
 
-# run a container that mounts the VOLUME_TO_BACKUP and the BACKUP_DEST
-# the container will create a tar and put it in the BACKUP_DEST
-docker run --rm	-v $VOLUME_TO_BACKUP:/backup -v $LOCAL_BACKUP_DEST:/backup-dest ubuntu tar czfP /backup-dest/$NAME_OF_BACKUP_TAR /backup
+    INSPECT_VOLUME=$(docker volume inspect ${DOCKER_VOLUME} 2>&1)
+    if [[ ${INSPECT_VOLUME} == *"No such volume"* ]] ; then
+        echo "> Error: docker volume '${DOCKER_VOLUME}' not found"
+        exit 1
+    fi
+}
 
+echo "> Backing up the docker-volume '${DOCKER_VOLUME}' to '${BACKUP_DIR}/${BACKUP_FILE}'"
 
-# todo: whatever post-handling of the tar that might be necessary (listing content for now...)
-#echo "Content of backup in $LOCAL_BACKUP_DEST/$NAME_OF_BACKUP_TAR"
-echo "Content of backup in $LOCAL_BACKUP_DEST/$NAME_OF_BACKUP_TAR"
-tar -tvf $LOCAL_BACKUP_DEST/$NAME_OF_BACKUP_TAR
+validateInput
+
+docker run --rm	\
+    -v ${DOCKER_VOLUME}:/backup-src \
+    -v ${BACKUP_DIR}:/backup-dest ${DOCKER_IMAGE} \
+    sh -c "cd /backup-src && tar -czvf ${BACKUP_FILE} * && mv ${BACKUP_FILE} /backup-dest"
+
+echo "> Finished!"
