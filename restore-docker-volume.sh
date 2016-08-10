@@ -33,4 +33,4 @@ docker run --rm	\
     -v ${RESTORE_FILE}:/restore-src.tar.gz ${DOCKER_IMAGE} \
     tar -xzvf /restore-src.tar.gz -C /backup-dest
 
-echo "> Finished! Docker volume is ready for use"
+echo "> Finished! Docker volume '${DOCKER_RESTORE_VOLUME}' is ready for use"
