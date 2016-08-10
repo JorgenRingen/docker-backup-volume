@@ -12,7 +12,7 @@ DOCKER_IMAGE=ubuntu
 
 function validateInput() {
     if [ ! -d "${BACKUP_DIR}" ] ; then
-        echo "> Error: backup directory doesn't exist at ${BACKUP_DIR}"
+        echo "> Error: backup directory doesn't exist at '${BACKUP_DIR}'"
         exit 1
     fi
 
@@ -23,13 +23,13 @@ function validateInput() {
     fi
 }
 
-echo "> Backing up the docker-volume '${DOCKER_VOLUME}' to '${BACKUP_DIR}/${BACKUP_FILE}'"
-
 validateInput
+
+echo "> Backing up the docker-volume '${DOCKER_VOLUME}' to '${BACKUP_DIR}/${BACKUP_FILE}'"
 
 docker run --rm	\
     -v ${DOCKER_VOLUME}:/backup-src \
     -v ${BACKUP_DIR}:/backup-dest ${DOCKER_IMAGE} \
     sh -c "cd /backup-src && tar -czvf ${BACKUP_FILE} * && mv ${BACKUP_FILE} /backup-dest"
 
-echo "> Finished!"
+echo "> Backup of docker-volume finished!"
