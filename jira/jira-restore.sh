@@ -10,7 +10,8 @@ JIRA_VOLUME_NAME=jira_volume
 
 
 function promptUser() {
-    echo "> Warning!!! This will delete the '${JIRA_VOLUME_NAME}' volume and create a new volume from backup file '${RESTORE_FILE}'"
+    echo "> Warning!!! This will delete the '${JIRA_VOLUME_NAME}' volume and the running JIRA container. "
+    echo "> A new volume from backup file '${RESTORE_FILE}' will be created and mounted from a new JIRA container"
     read -p "> Are you sure [y/n]? " -n 1 -r
     echo    # (optional) move to a new line
     if [[ ! $REPLY =~ ^[Yy]$ ]]
@@ -24,6 +25,9 @@ promptUser
 echo "> Stopping JIRA container..."
 docker-compose -f ${PATH_TO_COMPOSE_FILE} stop
 echo "> JIRA was stopped..."
+
+echo "> Removing existing container..."
+echo y | docker-compose -f ${PATH_TO_COMPOSE_FILE} rm
 
 echo "> Removing existing volume '${JIRA_VOLUME_NAME}'..."
 docker volume rm ${JIRA_VOLUME_NAME}
