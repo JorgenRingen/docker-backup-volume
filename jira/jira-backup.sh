@@ -6,7 +6,7 @@ PATH_TO_JIRA_IMAGE=$1
 PATH_TO_BACKUP_DEST=$2
 
 PATH_TO_COMPOSE_FILE=${PATH_TO_JIRA_IMAGE}/docker-compose.yml
-JIRA_VOLUME_NAME=jira_volume
+JIRA_VOLUME_NAME=jira-application-data
 
 echo "> Stopping JIRA container..."
 docker-compose -f ${PATH_TO_COMPOSE_FILE} stop

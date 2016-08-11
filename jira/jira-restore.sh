@@ -6,7 +6,7 @@ PATH_TO_JIRA_IMAGE=$1
 RESTORE_FILE=$2
 
 PATH_TO_COMPOSE_FILE=${PATH_TO_JIRA_IMAGE}/docker-compose.yml
-JIRA_VOLUME_NAME=jira_volume
+JIRA_VOLUME_NAME=jira-application-data
 
 
 function promptUser() {
