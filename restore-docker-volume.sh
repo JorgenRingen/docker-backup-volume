@@ -8,7 +8,7 @@
 
 DOCKER_RESTORE_VOLUME=$1
 RESTORE_FILE=$2
-DOCKER_IMAGE=ubuntu
+DOCKER_IMAGE=alpine
 
 function validateInput() {
     if [ ! -f "${RESTORE_FILE}" ] ; then

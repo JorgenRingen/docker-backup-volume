@@ -8,7 +8,7 @@
 DOCKER_VOLUME=$1
 BACKUP_DIR=$2
 BACKUP_FILE=${DOCKER_VOLUME}-backup-$(date +%d-%m-%y-%H.%M.%S).tar.gz
-DOCKER_IMAGE=ubuntu
+DOCKER_IMAGE=alpine
 
 function validateInput() {
     if [ ! -d "${BACKUP_DIR}" ] ; then
